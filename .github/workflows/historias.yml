@@ -1,0 +1,41 @@
+name: Historias Instagram
+
+on:
+  schedule:
+    - cron: "5,35 * * * *"
+  workflow_dispatch:
+    inputs:
+      prueba:
+        description: "Nombre de una pieza para probar sin publicar (ej. servicio_planta_A)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: historias
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publicar historia
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          IG_USER_ID: "17841443364146417"
+          MEDIA_BASE_URL: "https://hotelatenaspark.github.io/hap-historias"
+          PRUEBA: ${{ github.event.inputs.prueba }}
+        run: python3 publicar.py
+      - name: Guardar registro
+        if: always()
+        run: |
+          if [ -n "$(git status --porcelain publicados.txt)" ]; then
+            git config user.name "hap-bot"
+            git config user.email "hap-bot@users.noreply.github.com"
+            git add publicados.txt
+            git commit -m "Registro de historias publicadas"
+            git push
+          fi
