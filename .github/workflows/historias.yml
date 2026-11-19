@@ -9,6 +9,10 @@ on:
         description: "Nombre de una pieza para probar sin publicar (ej. servicio_planta_A)"
         required: false
         default: ""
+      publicar_ahora:
+        description: "Nombre de una pieza para publicarla YA en Instagram (fuera del calendario)"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -28,6 +32,7 @@ jobs:
           IG_USER_ID: "17841443364146417"
           MEDIA_BASE_URL: "https://hotelatenaspark.github.io/hap-historias"
           PRUEBA: ${{ github.event.inputs.prueba }}
+          PUBLICAR_AHORA: ${{ github.event.inputs.publicar_ahora }}
         run: python3 publicar.py
       - name: Guardar registro
         if: always()
