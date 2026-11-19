@@ -61,6 +61,10 @@ def main():
     if prueba:  # crea el contenedor sin publicar: valida token, permisos y URL
         print("Contenedor OK:", crear_contenedor(prueba))
         return
+    ahora_pieza = os.environ.get("PUBLICAR_AHORA", "").strip()
+    if ahora_pieza:  # publica de verdad una pieza fuera del calendario
+        print("Publicada ahora:", ahora_pieza, publicar(ahora_pieza))
+        return
 
     hechos = set(open(LOG).read().split("\n")) if os.path.exists(LOG) else set()
     ahora = datetime.now(VE)
